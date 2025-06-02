@@ -1,8 +1,7 @@
-// app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script";          // ← 1) adicione isto
+import Script from "next/script";               // (já existe)
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,23 +15,43 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const GA_ID = process.env.NEXT_PUBLIC_GA_ID;   // ← 2) pega o ID da Vercel
+  const GA_ID   = process.env.NEXT_PUBLIC_GA_ID;     // GA4
+  const GADS_ID = process.env.NEXT_PUBLIC_GADS_ID;   // ▼ novo Ads
 
   return (
     <html lang="pt-BR">
       <head>
-        {GA_ID && (                          /* 3) cola estes dois blocos */
+        {/* ---------- GA4 (já estava) ---------- */}
+        {GA_ID && (
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
               strategy="afterInteractive"
             />
-            <Script id="gtag-init" strategy="afterInteractive">
+            <Script id="ga-init" strategy="afterInteractive">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${GA_ID}', { page_path: window.location.pathname });
+              `}
+            </Script>
+          </>
+        )}
+
+        {/* ---------- Google Ads tag ---------- */}
+        {GADS_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GADS_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gads-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GADS_ID}');
               `}
             </Script>
           </>
