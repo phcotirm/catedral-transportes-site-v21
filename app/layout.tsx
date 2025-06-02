@@ -1,63 +1,29 @@
-import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import Script from "next/script";               // (já existe)
+import Script from "next/script";
 
-const inter = Inter({ subsets: ["latin"] });
+const GA_ID   = process.env.NEXT_PUBLIC_GA_ID;    //  G-XXXX
+const GADS_ID = process.env.NEXT_PUBLIC_GADS_ID;  //  AW-17145768392
 
-export const metadata: Metadata = {
-  title: "Catedral Transportes",
-  description: "Transporte de veículos com segurança e confiança",
-};
+// ... dentro do <head>:
+<>
+  {/* carrega gtag.js apenas 1 vez */}
+  {(GA_ID || GADS_ID) && (
+    <Script
+      src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID || GADS_ID}`}
+      strategy="afterInteractive"
+    />
+  )}
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const GA_ID   = process.env.NEXT_PUBLIC_GA_ID;     // GA4
-  const GADS_ID = process.env.NEXT_PUBLIC_GADS_ID;   // ▼ novo Ads
+  {/* inicializa e registra ambos IDs */}
+  {(GA_ID || GADS_ID) && (
+    <Script id="gtag-init" strategy="afterInteractive">
+      {`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-  return (
-    <html lang="pt-BR">
-      <head>
-        {/* ---------- GA4 (já estava) ---------- */}
-        {GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GA_ID}', { page_path: window.location.pathname });
-              `}
-            </Script>
-          </>
-        )}
-
-        {/* ---------- Google Ads tag ---------- */}
-        {GADS_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GADS_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="gads-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GADS_ID}');
-              `}
-            </Script>
-          </>
-        )}
-      </head>
-      <body className={inter.className}>{children}</body>
-    </html>
-  );
-}
+        ${GA_ID   ? `gtag('config', '${GA_ID}',   { page_path: window.location.pathname });` : ""}
+        ${GADS_ID ? `gtag('config', '${GADS_ID}');` : ""}
+      `}
+    </Script>
+  )}
+</>
