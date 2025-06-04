@@ -211,9 +211,13 @@ export default function CatedralTransportesSite() {
 
       {/* RODAPÉ */}
       <footer className="bg-[#023023] text-center py-6 text-sm text-[#f3f7f2]/70 border-t border-[#1a6c58] px-4">
-        <a href="https://www.transportedeveiculos.com.br" title="Portal Transporte de Veículos">Portal Transporte de Veiculos</a>
+        <p> 
+          <a href="https://www.transportedeveiculos.com.br" title="Portal Transporte de Veículos">Portal Transporte de Veiculos</a>  
+        </p>
+         <p> 
         © {new Date().getFullYear()} Catedral Transportes — Transporte de
         veículos com segurança, experiência e confiança.
+          </p>
       </footer>
     </div>
   );
